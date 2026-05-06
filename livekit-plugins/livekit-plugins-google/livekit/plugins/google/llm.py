@@ -80,6 +80,7 @@ class _LLMOptions:
     http_options: NotGivenOr[types.HttpOptions]
     seed: NotGivenOr[int]
     safety_settings: NotGivenOr[list[types.SafetySettingOrDict]]
+    cached_content: NotGivenOr[str]
 
 
 BLOCKED_REASONS = [
@@ -116,6 +117,7 @@ class LLM(llm.LLM):
         http_options: NotGivenOr[types.HttpOptions] = NOT_GIVEN,
         seed: NotGivenOr[int] = NOT_GIVEN,
         safety_settings: NotGivenOr[list[types.SafetySettingOrDict]] = NOT_GIVEN,
+        cached_content: NotGivenOr[str] = NOT_GIVEN,
     ) -> None:
         """
         Create a new instance of Google GenAI LLM.
@@ -213,6 +215,7 @@ class LLM(llm.LLM):
             http_options=http_options,
             seed=seed,
             safety_settings=safety_settings,
+            cached_content=cached_content,
         )
         self._client = Client(
             api_key=gemini_api_key,
@@ -377,6 +380,9 @@ class LLM(llm.LLM):
 
         if is_given(self._opts.safety_settings):
             extra["safety_settings"] = self._opts.safety_settings
+
+        if is_given(self._opts.cached_content):
+            extra["cached_content"] = self._opts.cached_content
 
         return LLMStream(
             self,
